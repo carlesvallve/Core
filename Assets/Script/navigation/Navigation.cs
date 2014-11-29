@@ -11,15 +11,13 @@ public class Navigation : MonoBehaviour {
 
 
 	public void startGame () {
-		print ("Start Game!");
-		//Application.LoadLevel("Game");
+		Audio.play("audio/typekey", 1.0f, 1.0f);
 		StartCoroutine(gotoLevel("Game", fadeDuration));
 	}
 
 
 	public void exitGame () {
-		print ("Exit Game!");
-		//Application.LoadLevel("Intro");
+		Audio.play("audio/typekey", 1.0f, 1.0f);
 		StartCoroutine(gotoLevel("Intro", fadeDuration));
 	}
 
@@ -30,7 +28,5 @@ public class Navigation : MonoBehaviour {
 		yield return new WaitForSeconds(duration);
 
 		Application.LoadLevel(levelName);
-
-		
 	}
 }
