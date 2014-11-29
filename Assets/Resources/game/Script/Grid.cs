@@ -12,8 +12,6 @@ public class Grid : MonoBehaviour {
 
 	public Cam cam;
 
-	public TouchControls touchControls;
-	public TouchLayer touchLayer;
 
 	void Awake () {
 		touchControls = GameObject.Find("TouchControls").GetComponent<TouchControls>();
@@ -67,6 +65,10 @@ public class Grid : MonoBehaviour {
 	// Gestures
 	// *****************************************************
 
+	public TouchControls touchControls;
+	public TouchLayer touchLayer;
+
+
 	private void registerTouchEvents () {
 		touchLayer = touchControls.getLayer("grid");
 		touchLayer.onPress += onTouchPress;
@@ -76,23 +78,22 @@ public class Grid : MonoBehaviour {
 	}
 	
 
-
 	public void onTouchPress (TouchEvent e) {
-		print ("press");
+		print ("press " + e.activeTouch.getPos3d(Camera.main));
 	}
 
 	
 	public void onTouchRelease (TouchEvent e) {
-		print ("release");
+		//print ("release");
 	}
 
 
 	public void onTouchMove (TouchEvent e) {
-		print ("move");
+		//print ("move");
 	}
 
 
 	public void onTouchSwipe (TouchEvent e) {
-		print ("swipe");
+		print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
 	}
 }
