@@ -5,17 +5,17 @@ using DG.Tweening;
 public class Ent : MonoBehaviour {
 
 	private Grid grid;
+	public GameObject box;
 	
 
 	public void init (Grid grid, Vector3 pos) {
 		this.grid = grid;
+		this.box = transform.Find("Box").gameObject;
 
 		transform.parent = grid.transform;
 		transform.localPosition = pos;
 
 		grid.cam.target = transform;
-
-		//moveTo(new Vector3(1,0,1), 0.5f);
 	}
 
 
@@ -28,8 +28,6 @@ public class Ent : MonoBehaviour {
 			delta.y = delta.y > 0 ? 1 : -1;
 			delta.x = 0;
 		}
-
-		//print (delta.x + " " + delta.y);
 
 		// get new position
 		Vector3 pos = new Vector3(
@@ -44,14 +42,20 @@ public class Ent : MonoBehaviour {
 
 
 	private void moveTo(Vector3 pos, float duration) {
-		transform.DOMove(pos, duration)
+		Audio.play("audio/MarioJump", 0.6f, 1.0f);
+
+		// move hero
+		transform.DOLocalMove(pos, duration)
 			.SetEase(Ease.InOutSine)
 			.SetLoops(1)
 			.OnComplete(endMove);
+
+		// make box jump
+		box.rigidbody.AddForce( new Vector3(0, 8 * box.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
 	private void endMove () {
-		//print ("end move");
+		Audio.play("audio/Step", 1.0f, 1.0f);
 	}
 }

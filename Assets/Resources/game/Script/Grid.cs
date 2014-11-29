@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Grid : MonoBehaviour {
 
-	private int width = 3;
-	private int height = 3;
+	public int width = 9;
+	public int height = 9;
 
 	private Tile[,] tiles;
 
@@ -38,10 +38,11 @@ public class Grid : MonoBehaviour {
 			}
 		}
 
-		hero = createHero(new Vector3(1, 0, 1));
+		hero = createHero(new Vector3(width / 2, 0, height / 2));
+		print (hero);
 	}
-	
-	
+
+
 	private Tile createTile (Vector3 pos) {
 		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Tile"));
 		
@@ -58,6 +59,21 @@ public class Grid : MonoBehaviour {
 		hero.init(this, pos);
 
 		return hero;
+	}
+
+
+	public void resetHero () {
+		// TODO: properties are gone when triggering this from a button...
+		print (this + " >>> " + this.hero + " >>> " + hero);
+		return;
+
+		hero.transform.localPosition = new Vector3(width / 2, 0, height / 2);
+
+		hero.box.rigidbody.velocity = Vector3.zero;
+		hero.box.rigidbody.angularVelocity = Vector3.zero;
+		 
+		hero.box.transform.localPosition = Vector3.zero; // or whatever
+		hero.box.transform.localRotation = Quaternion.identity;
 	}
 
 
