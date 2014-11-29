@@ -38,15 +38,25 @@ public class Navigation : MonoBehaviour {
 
 	public void startGame () {
 		sceneToLoad = "Game";
-		Audio.play("audio/typekey", 1.0f, 1.0f);
+		//Audio.play("audio/typekey", 1.0f, 1.0f);
 		fadeOut(fadeDuration);
 	}
 
 
 	public void exitGame () {
 		sceneToLoad = "Intro";
-		Audio.play("audio/typekey", 1.0f, 1.0f);
+		//Audio.play("audio/typekey", 1.0f, 1.0f);
 		fadeOut(fadeDuration);
+	}
+
+
+	public void pressButton () {
+		Audio.play("audio/click", 1.0f, 1.0f);
+	}
+
+
+	public void releaseButton () {
+		Audio.play("audio/typekey", 1.0f, 1.0f);
 	}
 
 

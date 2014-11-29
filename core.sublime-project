@@ -4,7 +4,24 @@
 		{
 			"follow_symlinks": true,
 			"path": ".",
-			"file_exclude_patterns": ["*.unity","*.guiskin","*.dll","*.meta" ,"*.prefab" ,"*.anim", "*.physicMaterial", "*.flare" , "*.cubemap" , "*.font" , "*.fontsettings" , "*.renderTexture"]
+			"file_exclude_patterns": [
+				"*.unity",
+				"*.guiskin",
+				"*.dll",
+				"*.meta" ,
+				"*.prefab" ,
+				"*.anim", 
+				"*.physicMaterial", 
+				"*.flare", 
+				"*.cubemap", 
+				"*.font", 
+				"*.fontsettings", 
+				"*.renderTexture",
+
+				"*.wav",
+				"*.aif",
+				"*.ttf"
+			]
 		}
 	]
 }
