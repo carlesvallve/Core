@@ -42,7 +42,7 @@ public class Ent : MonoBehaviour {
 
 
 	private void moveTo(Vector3 pos, float duration) {
-		Audio.play("audio/MarioJump", 0.6f, 1.0f);
+		Audio.play("audio/MarioJump", 0.75f, Random.Range(0.5f, 2.0f));
 
 		// move hero
 		transform.DOLocalMove(pos, duration)
@@ -56,6 +56,6 @@ public class Ent : MonoBehaviour {
 
 
 	private void endMove () {
-		Audio.play("audio/Step", 1.0f, 1.0f);
+		//Audio.play("audio/Step", 0.5f, 2.0f);
 	}
 }
