@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class Ent : MonoBehaviour {
 
@@ -12,5 +13,20 @@ public class Ent : MonoBehaviour {
 		transform.localPosition = pos;
 
 		grid.cam.target = transform;
+
+		moveTo(new Vector3(0,0,0), 0.5f);
+	}
+
+
+	private void moveTo(Vector3 pos, float duration) {
+		transform.DOMove(pos, duration)
+			.SetEase(Ease.InOutQuint)
+			.SetLoops(1)
+			.OnComplete(endMove);
+	}
+
+
+	private void endMove () {
+		print ("end move");
 	}
 }

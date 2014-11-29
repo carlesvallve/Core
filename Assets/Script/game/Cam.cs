@@ -8,7 +8,7 @@ public class Cam : MonoBehaviour {
 	public Transform target;
 	public Vector3 center = new Vector3(0, 0, 0);
 	public Vector3 angle = new Vector3(45, 45, 0);
-	public float distance = 10;
+	public float distance = 0;
 
 	public bool isOrtographic;
 
