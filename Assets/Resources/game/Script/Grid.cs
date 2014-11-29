@@ -38,7 +38,7 @@ public class Grid : MonoBehaviour {
 			}
 		}
 
-		hero = createHero(new Vector3(0, 0, 1));
+		hero = createHero(new Vector3(1, 0, 1));
 	}
 	
 	
@@ -79,7 +79,7 @@ public class Grid : MonoBehaviour {
 	
 
 	public void onTouchPress (TouchEvent e) {
-		print ("press " + e.activeTouch.getPos3d(Camera.main));
+		//print ("press " + e.activeTouch.getPos3d(Camera.main));
 	}
 
 	
@@ -94,6 +94,8 @@ public class Grid : MonoBehaviour {
 
 
 	public void onTouchSwipe (TouchEvent e) {
-		print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
+		//print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
+	
+		hero.moveInDirection(e.activeTouch.deltaPos);
 	}
 }
