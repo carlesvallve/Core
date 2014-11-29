@@ -12,12 +12,22 @@ public class Grid : MonoBehaviour {
 
 	public Cam cam;
 
+	public TouchControls touchControls;
+	public TouchLayer touchLayer;
+
 	void Awake () {
+		touchControls = GameObject.Find("TouchControls").GetComponent<TouchControls>();
+
 		cam = Camera.main.GetComponent<Cam>();
 
 		init();
 
 		cam.init();
+	}
+
+
+	void Start () {
+		registerTouchEvents();
 	}
 
 
@@ -50,5 +60,39 @@ public class Grid : MonoBehaviour {
 		hero.init(this, pos);
 
 		return hero;
+	}
+
+
+	// *****************************************************
+	// Gestures
+	// *****************************************************
+
+	private void registerTouchEvents () {
+		touchLayer = touchControls.getLayer("grid");
+		touchLayer.onPress += onTouchPress;
+		touchLayer.onRelease += onTouchRelease;
+		touchLayer.onMove += onTouchMove;
+		touchLayer.onSwipe += onTouchSwipe;
+	}
+	
+
+
+	public void onTouchPress (TouchEvent e) {
+		print ("press");
+	}
+
+	
+	public void onTouchRelease (TouchEvent e) {
+		print ("release");
+	}
+
+
+	public void onTouchMove (TouchEvent e) {
+		print ("move");
+	}
+
+
+	public void onTouchSwipe (TouchEvent e) {
+		print ("swipe");
 	}
 }
