@@ -10,14 +10,11 @@ public class Navigation : MonoBehaviour {
 	public int FPS = 60;
 	public bool showFPS = false;
 
+	private int tframe = 0;
+
 	private Image fadeImage;
 	private Text fpsText;
 	
-    private int m_fps;
-    private int tframe = 0;
-    
-    private string sceneToLoad;
-
 
     // Initialization
 
@@ -34,21 +31,7 @@ public class Navigation : MonoBehaviour {
 	}
 
 
-	// Navigation Handlers
-
-	public void startGame () {
-		sceneToLoad = "Game";
-		//Audio.play("audio/typekey", 1.0f, 1.0f);
-		fadeOut(fadeDuration);
-	}
-
-
-	public void exitGame () {
-		sceneToLoad = "Intro";
-		//Audio.play("audio/typekey", 1.0f, 1.0f);
-		fadeOut(fadeDuration);
-	}
-
+	// Button Handlers
 
 	public void pressButton () {
 		Audio.play("audio/click", 1.0f, 1.0f);
@@ -60,38 +43,46 @@ public class Navigation : MonoBehaviour {
 	}
 
 
-	private void loadNextScene () {
-		Application.LoadLevel(sceneToLoad);
+	// Navigation Handlers
+
+	public void gotoScene (string sceneName) {
+		fadeOut(fadeDuration, sceneName);
+	}
+
+
+	private void loadScene (string sceneName) {
+		if (sceneName == null) { return; }
+		Application.LoadLevel(sceneName);
 	}
 
 
 	// Screen Fader
 
-	public void fadeIn (float duration) {
+	private void fadeIn (float duration) {
 		fadeImage.enabled = true;
 		fadeImage.color = new Color(0,0,0,1);
 		DOTween.ToAlpha(()=> fadeImage.color, x => fadeImage.color = x, 0, duration);
 	}
 
 
-	public void fadeOut (float duration) {
+	private void fadeOut (float duration, string sceneName) {
 		fadeImage.enabled = true;
 		fadeImage.color = new Color(0,0,0,0);
 
 		DOTween.ToAlpha(()=> fadeImage.color, x => fadeImage.color = x, 1, duration)
-			.OnComplete(loadNextScene);
+			.OnComplete(()=>loadScene(sceneName));
 	}
 
 
 	// FPS Counter
 
 	void Update () {
+		if (!showFPS) { return; }
+
 		tframe++;
 		if (tframe == FPS) {
 			tframe = 0;
-			m_fps = (int)(1 / Time.deltaTime);
+			fpsText.text = (int)(1 / Time.deltaTime) + " fps";
 		}
-
-		fpsText.text = m_fps + " fps";
 	}
 }
