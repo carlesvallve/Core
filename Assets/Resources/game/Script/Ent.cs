@@ -8,6 +8,9 @@ public class Ent : MonoBehaviour {
 	public GameObject box;
 
 	private Vector3 stepPos;
+
+	public float speed = 0.2f;
+	public Ease easing = Ease.Linear; //InOutQuad; //InOutSine;
 	
 
 	public void init (Grid grid, Vector3 pos) {
@@ -41,7 +44,7 @@ public class Ent : MonoBehaviour {
 		);
 
 		// move
-		moveTo(stepPos, 0.2f);
+		moveTo(stepPos, speed);
 	}
 
 
@@ -50,12 +53,12 @@ public class Ent : MonoBehaviour {
 
 		// move hero
 		transform.DOLocalMove(pos, duration)
-			.SetEase(Ease.InOutSine)
+			.SetEase(easing)
 			.SetLoops(1)
 			.OnComplete(endMove);
 
 		// make box jump
-		box.rigidbody.AddForce( new Vector3(0, 8 * box.rigidbody.mass, 0), ForceMode.Impulse);
+		box.rigidbody.AddForce( new Vector3(0, 8f * box.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
