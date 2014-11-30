@@ -6,6 +6,8 @@ public class Ent : MonoBehaviour {
 
 	private Grid grid;
 	public GameObject box;
+
+	private Vector3 stepPos;
 	
 
 	public void init (Grid grid, Vector3 pos) {
@@ -14,6 +16,8 @@ public class Ent : MonoBehaviour {
 
 		transform.parent = grid.transform;
 		transform.localPosition = pos;
+
+		stepPos = transform.localPosition;
 
 		grid.cam.target = transform;
 	}
@@ -30,19 +34,19 @@ public class Ent : MonoBehaviour {
 		}
 
 		// get new position
-		Vector3 pos = new Vector3(
-			Mathf.Round(transform.position.x) + delta.x, 
+		stepPos = new Vector3(
+			Mathf.Round(stepPos.x) + delta.x, 
 			0, 
-			Mathf.Round(transform.position.z) + delta.y
+			Mathf.Round(stepPos.z) + delta.y
 		);
 
 		// move
-		moveTo(pos, 0.2f);
+		moveTo(stepPos, 0.2f);
 	}
 
 
 	private void moveTo(Vector3 pos, float duration) {
-		Audio.play("audio/MarioJump", 0.75f, Random.Range(0.5f, 2.0f));
+		Audio.play("audio/MarioJump", 0.75f, Random.Range(1.0f, 3.0f));
 
 		// move hero
 		transform.DOLocalMove(pos, duration)
