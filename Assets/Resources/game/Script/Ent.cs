@@ -27,7 +27,7 @@ public class Ent : MonoBehaviour {
 
 
 	public void reset () {
-		// TODO: properties are gone when triggering this from a button...
+		// TODO: class properties are gone when triggering this from a button...
 		print (">>> " + this + " >>> " + this.body);
 		return;
 
@@ -36,7 +36,7 @@ public class Ent : MonoBehaviour {
 		body.rigidbody.velocity = Vector3.zero;
 		body.rigidbody.angularVelocity = Vector3.zero;
 		 
-		body.transform.localPosition = Vector3.zero; // or whatever
+		body.transform.localPosition = Vector3.zero;
 		body.transform.localRotation = Quaternion.identity;
 	}
 
@@ -51,14 +51,23 @@ public class Ent : MonoBehaviour {
 			delta.x = 0;
 		}
 
-		// get new position
-		stepPos = new Vector3(
-			Mathf.Round(stepPos.x) + delta.x, 
-			0, 
-			Mathf.Round(stepPos.z) + delta.y
-		);
+		// get body rotation
+		float rot = 0;
+		if (delta.y == 1) {
+			rot = 180;
+		} else if (delta.y == -1) {
+			rot = 0;
+		} else if (delta.x == 1) {
+			rot = -90;
+		} else if (delta.x == -1) {
+			rot = 90;
+		}
 
-		// move
+		// rotate body
+		body.transform.DOLocalRotate(new Vector3(0, rot, 0), 0.05f).SetEase(Ease.InOutSine);
+
+		// move to new position
+		stepPos = new Vector3(Mathf.Round(stepPos.x) + delta.x, 0, Mathf.Round(stepPos.z) + delta.y);
 		moveTo(stepPos, speed);
 	}
 
