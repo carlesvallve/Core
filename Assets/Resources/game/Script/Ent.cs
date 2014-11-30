@@ -5,7 +5,7 @@ using DG.Tweening;
 public class Ent : MonoBehaviour {
 
 	private Grid grid;
-	public GameObject box;
+	private GameObject body;
 
 	private Vector3 stepPos;
 
@@ -15,7 +15,7 @@ public class Ent : MonoBehaviour {
 
 	public void init (Grid grid, Vector3 pos) {
 		this.grid = grid;
-		this.box = transform.Find("Box").gameObject;
+		this.body = transform.Find("Body").gameObject;
 
 		transform.parent = grid.transform;
 		transform.localPosition = pos;
@@ -23,6 +23,21 @@ public class Ent : MonoBehaviour {
 		stepPos = transform.localPosition;
 
 		grid.cam.target = transform;
+	}
+
+
+	public void reset () {
+		// TODO: properties are gone when triggering this from a button...
+		print (">>> " + this + " >>> " + this.body);
+		return;
+
+		transform.localPosition = new Vector3(grid.width / 2, 0, grid.height / 2);
+
+		body.rigidbody.velocity = Vector3.zero;
+		body.rigidbody.angularVelocity = Vector3.zero;
+		 
+		body.transform.localPosition = Vector3.zero; // or whatever
+		body.transform.localRotation = Quaternion.identity;
 	}
 
 
@@ -58,7 +73,7 @@ public class Ent : MonoBehaviour {
 			.OnComplete(endMove);
 
 		// make box jump
-		box.rigidbody.AddForce( new Vector3(0, 8f * box.rigidbody.mass, 0), ForceMode.Impulse);
+		body.rigidbody.AddForce( new Vector3(0, 8f * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 

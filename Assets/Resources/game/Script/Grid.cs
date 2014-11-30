@@ -62,21 +62,6 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	public void resetHero () {
-		// TODO: properties are gone when triggering this from a button...
-		print (this + " >>> " + this.hero + " >>> " + hero);
-		return;
-
-		hero.transform.localPosition = new Vector3(width / 2, 0, height / 2);
-
-		hero.box.rigidbody.velocity = Vector3.zero;
-		hero.box.rigidbody.angularVelocity = Vector3.zero;
-		 
-		hero.box.transform.localPosition = Vector3.zero; // or whatever
-		hero.box.transform.localRotation = Quaternion.identity;
-	}
-
-
 	// *****************************************************
 	// Gestures
 	// *****************************************************
