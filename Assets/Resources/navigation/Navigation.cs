@@ -26,6 +26,8 @@ public class Navigation : MonoBehaviour {
 		fpsText = canvas.Find("Fps").GetComponent<Text>();
 		fpsText.enabled = showFPS;
 
+		Application.targetFrameRate = FPS;
+
 		// fade in
 		fadeIn(fadeDuration);
 	}
