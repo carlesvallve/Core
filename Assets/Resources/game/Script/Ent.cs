@@ -8,9 +8,13 @@ public class Ent : MonoBehaviour {
 	private GameObject body;
 
 	private Vector3 stepPos;
+	private Vector2 delta = new Vector2(0, 1);
 
-	public float speed = 0.2f;
-	public Ease easing = Ease.Linear; //InOutQuad; //InOutSine;
+	public float speed = 0.1f;
+	public Ease easing = Ease.InOutSine; //Linear; //InOutQuad; //InOutSine;
+
+	private bool moving = false;
+	private bool goingToMove = false;
 	
 
 	public void init (Grid grid, Vector3 pos) {
@@ -19,6 +23,7 @@ public class Ent : MonoBehaviour {
 
 		transform.parent = grid.transform;
 		transform.localPosition = pos;
+		body.transform.eulerAngles = new Vector3(0, 180, 0);
 
 		stepPos = transform.localPosition;
 
@@ -28,20 +33,31 @@ public class Ent : MonoBehaviour {
 
 	public void reset () {
 		// TODO: class properties are gone when triggering this from a button...
-		print (">>> " + this + " >>> " + this.body);
-		return;
+		//print (">>> " + this + " >>> " + this.body);
+		//return;
 
-		transform.localPosition = new Vector3(grid.width / 2, 0, grid.height / 2);
+		//transform.localPosition = new Vector3(grid.width / 2, 0, grid.height / 2);
 
 		body.rigidbody.velocity = Vector3.zero;
 		body.rigidbody.angularVelocity = Vector3.zero;
-		 
 		body.transform.localPosition = Vector3.zero;
-		body.transform.localRotation = Quaternion.identity;
+		//body.transform.localRotation = Quaternion.identity;
+	}
+
+
+	public void moveInSameDirection () {
+		moveInDirection(delta);
 	}
 
 
 	public void moveInDirection(Vector2 delta) {
+		if (moving) {
+			goingToMove = true;
+			return;
+		}
+
+		moving = true;
+
 		// get direction
 		if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y)) {
 			delta.x = delta.x > 0 ? 1 : -1;
@@ -50,6 +66,9 @@ public class Ent : MonoBehaviour {
 			delta.y = delta.y > 0 ? 1 : -1;
 			delta.x = 0;
 		}
+
+		// record delta
+		this.delta = delta;
 
 		// get body rotation
 		float rot = 0;
@@ -82,11 +101,22 @@ public class Ent : MonoBehaviour {
 			.OnComplete(endMove);
 
 		// make box jump
-		body.rigidbody.AddForce( new Vector3(0, 8f * body.rigidbody.mass, 0), ForceMode.Impulse);
+		body.rigidbody.AddForce( new Vector3(0, 7f * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
 	private void endMove () {
-		//Audio.play("audio/Step", 0.5f, 2.0f);
+		int myInt = 0;
+		DOTween.To(()=> myInt, x=> myInt = x, 100, 0.1f)
+			.OnComplete(()=> prepareNextMove());
+	}
+
+
+	private void prepareNextMove() {
+		moving = false; 
+		if (goingToMove) { 
+			moveInSameDirection(); 
+			goingToMove = false;
+		}
 	}
 }

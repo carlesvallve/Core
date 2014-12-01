@@ -81,11 +81,13 @@ public class Grid : MonoBehaviour {
 
 	public void onTouchPress (TouchEvent e) {
 		//print ("press " + e.activeTouch.getPos3d(Camera.main));
+
 	}
 
 	
 	public void onTouchRelease (TouchEvent e) {
 		//print ("release");
+		hero.moveInSameDirection();
 	}
 
 
@@ -96,7 +98,6 @@ public class Grid : MonoBehaviour {
 
 	public void onTouchSwipe (TouchEvent e) {
 		//print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
-	
 		hero.moveInDirection(e.activeTouch.deltaPos);
 	}
 }
