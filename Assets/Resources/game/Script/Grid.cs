@@ -91,7 +91,7 @@ public class Grid : MonoBehaviour {
 
 	public void onTouchPress (TouchEvent e) {
 		//print ("press " + e.activeTouch.getPos3d(Camera.main));
-
+		hero.crouch();
 	}
 
 	

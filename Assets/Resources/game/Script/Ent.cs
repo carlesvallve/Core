@@ -11,7 +11,7 @@ public class Ent : MonoBehaviour {
 	private Vector2 delta = new Vector2(0, 1);
 
 	public float speed = 0.1f;
-	public Ease easing = Ease.InOutSine; //Linear; InOutQuad; InOutSine;
+	public Ease easing = Ease.Linear; //Linear; InOutQuad; InOutSine;
 
 	private bool moving = false;
 	private bool goingToMove = false;
@@ -102,29 +102,36 @@ public class Ent : MonoBehaviour {
 			.SetLoops(1)
 			.OnComplete(endMove);
 
+		transform.DOScale(new Vector3(1, 1, 1), duration + 0.1f)
+		.SetEase(Ease.OutQuad);
+
+		// reset box physics
+		body.rigidbody.velocity = Vector3.zero;
+		body.rigidbody.angularVelocity = Vector3.zero;
+
 		// make box jump
-		body.rigidbody.AddForce( new Vector3(0, 7f * body.rigidbody.mass, 0), ForceMode.Impulse);
+		body.rigidbody.AddForce( new Vector3(0, 6f * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
 	private void endMove () {
-		StartCoroutine(prepareNextMove());
-		// wait 0.1 seconds an prepare next move
-		/*int myInt = 0;
-		DOTween.To(()=> myInt, x=> myInt = x, 100, 0.1f)
-			.OnComplete(()=> prepareNextMove());*/
+		StartCoroutine(setNextMove());
 	}
 
 
-	private IEnumerator prepareNextMove() {
+	private IEnumerator setNextMove() {
 		yield return new WaitForSeconds(0.1f);
 		
 		moving = false; 
 
-		// move again if required
 		if (goingToMove) { 
 			moveInSameDirection(); 
 			goingToMove = false;
 		}
+	}
+
+	public void crouch () {
+		transform.DOScale(new Vector3(1.1f, 0.7f, 1.2f), 0.1f)
+		.SetEase(Ease.OutQuad);
 	}
 }
