@@ -110,7 +110,7 @@ public class Ent : MonoBehaviour {
 		body.rigidbody.angularVelocity = Vector3.zero;
 
 		// make box jump
-		body.rigidbody.AddForce( new Vector3(0, 6f * body.rigidbody.mass, 0), ForceMode.Impulse);
+		body.rigidbody.AddForce( new Vector3(0, 7f * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
@@ -131,7 +131,7 @@ public class Ent : MonoBehaviour {
 	}
 
 	public void crouch () {
-		transform.DOScale(new Vector3(1.1f, 0.8f, 1.1f), 0.1f)
+		transform.DOScale(new Vector3(1.2f, 0.75f, 1.1f), 0.1f)
 		.SetEase(Ease.OutQuad);
 	}
 }
