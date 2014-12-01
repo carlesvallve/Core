@@ -131,7 +131,7 @@ public class Ent : MonoBehaviour {
 	}
 
 	public void crouch () {
-		transform.DOScale(new Vector3(1.1f, 0.7f, 1.2f), 0.1f)
+		transform.DOScale(new Vector3(1.1f, 0.8f, 1.1f), 0.1f)
 		.SetEase(Ease.OutQuad);
 	}
 }

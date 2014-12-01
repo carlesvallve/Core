@@ -45,7 +45,7 @@ public class Cam : MonoBehaviour {
 
 		if (interval > 0) {
 			transform.rotation = Quaternion.Slerp (transform.rotation, rotation, Time.deltaTime * interval);
-			transform.position = Vector3.Slerp(transform.position, position, Time.deltaTime * interval);
+			transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * interval);
 		} else {
 			transform.rotation = rotation;
 			transform.position = position;
