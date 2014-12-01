@@ -11,7 +11,7 @@ public class Ent : MonoBehaviour {
 	private Vector2 delta = new Vector2(0, 1);
 
 	public float speed = 0.1f;
-	public Ease easing = Ease.InOutSine; //Linear; //InOutQuad; //InOutSine;
+	public Ease easing = Ease.InOutSine; //Linear; InOutQuad; InOutSine;
 
 	private bool moving = false;
 	private bool goingToMove = false;
@@ -36,12 +36,12 @@ public class Ent : MonoBehaviour {
 		//print (">>> " + this + " >>> " + this.body);
 		//return;
 
-		//transform.localPosition = new Vector3(grid.width / 2, 0, grid.height / 2);
+		transform.localPosition = new Vector3(grid.width / 2, 0, grid.height / 2);
 
 		body.rigidbody.velocity = Vector3.zero;
 		body.rigidbody.angularVelocity = Vector3.zero;
 		body.transform.localPosition = Vector3.zero;
-		//body.transform.localRotation = Quaternion.identity;
+		body.transform.localRotation = Quaternion.identity;
 	}
 
 
@@ -85,8 +85,10 @@ public class Ent : MonoBehaviour {
 		// rotate body
 		body.transform.DOLocalRotate(new Vector3(0, rot, 0), 0.05f).SetEase(Ease.InOutSine);
 
-		// move to new position
+		// get new position
 		stepPos = new Vector3(Mathf.Round(stepPos.x) + delta.x, 0, Mathf.Round(stepPos.z) + delta.y);
+
+		// move to new position
 		moveTo(stepPos, speed);
 	}
 
@@ -106,14 +108,20 @@ public class Ent : MonoBehaviour {
 
 
 	private void endMove () {
-		int myInt = 0;
+		StartCoroutine(prepareNextMove());
+		// wait 0.1 seconds an prepare next move
+		/*int myInt = 0;
 		DOTween.To(()=> myInt, x=> myInt = x, 100, 0.1f)
-			.OnComplete(()=> prepareNextMove());
+			.OnComplete(()=> prepareNextMove());*/
 	}
 
 
-	private void prepareNextMove() {
+	private IEnumerator prepareNextMove() {
+		yield return new WaitForSeconds(0.1f);
+		
 		moving = false; 
+
+		// move again if required
 		if (goingToMove) { 
 			moveInSameDirection(); 
 			goingToMove = false;

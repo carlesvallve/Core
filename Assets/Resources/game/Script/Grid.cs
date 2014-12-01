@@ -38,8 +38,9 @@ public class Grid : MonoBehaviour {
 			}
 		}
 
+		createTrees(8);
+
 		hero = createHero(new Vector3(width / 2, 0, height / 2));
-		print (hero);
 	}
 
 
@@ -59,6 +60,15 @@ public class Grid : MonoBehaviour {
 		hero.init(this, pos);
 
 		return hero;
+	}
+
+
+	private void createTrees (int max) {
+		for (int i = 0; i < max; i++) {
+			GameObject tree = (GameObject)Instantiate(Resources.Load("game/Prefabs/Tree"));
+			tree.transform.parent = transform;
+			tree.transform.localPosition = new Vector3(Random.Range(0, width), 0, Random.Range(0, height));
+		}
 	}
 
 
