@@ -94,7 +94,7 @@ public class Ent : MonoBehaviour {
 
 
 	private void moveTo(Vector3 pos, float duration) {
-		Audio.play("audio/MarioJump", 0.75f, Random.Range(1.0f, 3.0f));
+		Audio.play("audio/MarioJump", 0.5f, Random.Range(2.0f, 3.0f));
 
 		// move hero
 		transform.DOLocalMove(pos, duration)
