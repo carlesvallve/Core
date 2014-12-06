@@ -30,11 +30,14 @@ public class Grid : MonoBehaviour {
 
 
 	private void init() {
+		Transform container = new GameObject("Tiles").transform;
+		container.parent = transform;
+
 		tiles = new Tile[width, height];
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				tiles[x, y] = createTile(new Vector3(x, 0, y));
+				tiles[x, y] = createTile(container, new Vector3(x, 0, y));
 			}
 		}
 
@@ -44,30 +47,44 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	private Tile createTile (Vector3 pos) {
+	private Tile createTile (Transform parent, Vector3 pos) {
 		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Tile"));
 		
 		Tile tile = obj.GetComponent<Tile>();
-		tile.init(this, pos);
+		tile.init(this, parent, pos);
 
 		return tile;
 	}
 
+
+	public Tile getTileAtPos (Vector3 pos) {
+		if (pos.x < 0 || pos.x > width - 1 || pos.z < 0 || pos.z > height - 1) { return null; }
+		return tiles[(int)pos.x, (int)pos.z];
+	}
+
+
 	private Ent createHero (Vector3 pos) {
 		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Hero"));
 		
-		Ent hero = obj.GetComponent<Ent>();
-		hero.init(this, pos);
+		Ent hero = obj.GetComponent<Hero>();
+		hero.init(this, transform, pos);
 
 		return hero;
 	}
 
 
 	private void createTrees (int max) {
+		Transform container = new GameObject("Trees").transform;
+		container.parent = transform;
+
 		for (int i = 0; i < max; i++) {
 			GameObject tree = (GameObject)Instantiate(Resources.Load("game/Prefabs/Tree"));
-			tree.transform.parent = transform;
+			tree.name = "Tree" + i;
+			tree.transform.parent = container.transform;
 			tree.transform.localPosition = new Vector3(Random.Range(0, width), 0, Random.Range(0, height));
+		
+			Tile tile = getTileAtPos(tree.transform.localPosition);
+			tile.setWalkable(false);
 		}
 	}
 
@@ -91,7 +108,7 @@ public class Grid : MonoBehaviour {
 
 	public void onTouchPress (TouchEvent e) {
 		//print ("press " + e.activeTouch.getPos3d(Camera.main));
-		hero.crouch();
+		hero.crouch(true);
 	}
 
 	

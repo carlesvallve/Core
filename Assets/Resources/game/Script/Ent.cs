@@ -4,24 +4,26 @@ using DG.Tweening;
 
 public class Ent : MonoBehaviour {
 
-	private Grid grid;
-	private GameObject body;
+	protected Grid grid;
+	protected GameObject body;
 
-	private Vector3 stepPos;
-	private Vector2 delta = new Vector2(0, 1);
+	protected Vector3 stepPos;
+	protected Vector2 delta = new Vector2(0, 1);
+	protected bool moving = false;
+	protected bool goingToMove = false;
 
-	public float speed = 0.1f;
-	public Ease easing = Ease.Linear; //Linear; InOutQuad; InOutSine;
+	public float speed = 0.1f; 			// speed of movement
+	public float rotationSpeed = 0.05f;  // speed of rotation
+	public float reaction = 0; //0.1f;  // delay time between moves
+	public float jumpForce = 7f;		// jump impulse force
 
-	private bool moving = false;
-	private bool goingToMove = false;
 	
-
-	public void init (Grid grid, Vector3 pos) {
+	public virtual void init (Grid grid, Transform parent, Vector3 pos) {
 		this.grid = grid;
 		this.body = transform.Find("Body").gameObject;
 
-		transform.parent = grid.transform;
+		name = "Hero";
+		transform.parent = parent;
 		transform.localPosition = pos;
 		body.transform.eulerAngles = new Vector3(0, 180, 0);
 
@@ -50,7 +52,7 @@ public class Ent : MonoBehaviour {
 	}
 
 
-	public void moveInDirection(Vector2 delta) {
+	public void moveInDirection(Vector2 _delta) {
 		if (moving) {
 			goingToMove = true;
 			return;
@@ -58,7 +60,32 @@ public class Ent : MonoBehaviour {
 
 		moving = true;
 
-		// get direction
+		// set final delta
+		setDelta(_delta);
+
+		// make body rotate
+		rotateTo(delta);
+
+		// make body jump
+		jump();
+
+		// get new position
+		Vector3 newPos = new Vector3(
+			Mathf.Round(stepPos.x) + delta.x, 0, Mathf.Round(stepPos.z) + delta.y
+		);
+
+		// check next tile walkability
+		Tile tile = grid.getTileAtPos(newPos);
+		if (!tile || !tile.getWalkable()) {
+			newPos = transform.position;
+		}
+
+		// move to new position
+		moveTo(newPos, speed);
+	}
+
+
+	private void setDelta(Vector2 delta) {
 		if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y)) {
 			delta.x = delta.x > 0 ? 1 : -1;
 			delta.y = 0;
@@ -67,10 +94,11 @@ public class Ent : MonoBehaviour {
 			delta.x = 0;
 		}
 
-		// record delta
 		this.delta = delta;
+	}
 
-		// get body rotation
+
+	private void rotateTo (Vector2 delta) {
 		float rot = 0;
 		if (delta.y == 1) {
 			rot = 180;
@@ -82,35 +110,34 @@ public class Ent : MonoBehaviour {
 			rot = 90;
 		}
 
-		// rotate body
-		body.transform.DOLocalRotate(new Vector3(0, rot, 0), 0.05f).SetEase(Ease.InOutSine);
-
-		// get new position
-		stepPos = new Vector3(Mathf.Round(stepPos.x) + delta.x, 0, Mathf.Round(stepPos.z) + delta.y);
-
-		// move to new position
-		moveTo(stepPos, speed);
+		body.transform.DOLocalRotate(new Vector3(0, rot, 0), rotationSpeed)
+			.SetEase(Ease.InOutSine);
 	}
 
 
 	private void moveTo(Vector3 pos, float duration) {
-		Audio.play("audio/MarioJump", 0.5f, Random.Range(2.0f, 3.0f));
-
 		// move hero
 		transform.DOLocalMove(pos, duration)
-			.SetEase(easing)
+			.SetEase(Ease.Linear)
 			.SetLoops(1)
 			.OnComplete(endMove);
 
 		transform.DOScale(new Vector3(1, 1, 1), duration + 0.1f)
 		.SetEase(Ease.OutQuad);
 
+		// update step position
+		stepPos = pos;
+	}
+
+
+	private void jump () {
 		// reset box physics
 		body.rigidbody.velocity = Vector3.zero;
 		body.rigidbody.angularVelocity = Vector3.zero;
 
 		// make box jump
-		body.rigidbody.AddForce( new Vector3(0, 7f * body.rigidbody.mass, 0), ForceMode.Impulse);
+		Audio.play("audio/MarioJump", 0.5f, Random.Range(2.0f, 3.0f));
+		body.rigidbody.AddForce( new Vector3(0, jumpForce * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
@@ -120,18 +147,26 @@ public class Ent : MonoBehaviour {
 
 
 	private IEnumerator setNextMove() {
-		yield return new WaitForSeconds(0.1f);
+		bool _goingToMove = goingToMove;
+		if (goingToMove) { 
+			crouch(false); 
+			goingToMove = false;
+		}
+
+		yield return new WaitForSeconds(reaction);
 		
 		moving = false; 
 
-		if (goingToMove) { 
+		if (_goingToMove) { 
 			moveInSameDirection(); 
-			goingToMove = false;
 		}
 	}
 
-	public void crouch () {
-		transform.DOScale(new Vector3(1.2f, 0.75f, 1.1f), 0.1f)
+
+	public void crouch (bool escapeIfMoving) {
+		if (escapeIfMoving && moving) { return; }
+
+		transform.DOScale(new Vector3(1.2f, 0.8f, 1.0f), 0.1f)
 		.SetEase(Ease.OutQuad);
 	}
 }
