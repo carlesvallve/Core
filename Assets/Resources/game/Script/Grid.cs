@@ -64,10 +64,12 @@ public class Grid : MonoBehaviour {
 
 
 	private Ent createHero (Vector3 pos) {
-		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Hero"));
+		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Hero2"));
 		
-		Ent hero = obj.GetComponent<Hero>();
+		Hero hero = obj.GetComponent<Hero>();
+
 		hero.init(this, transform, pos);
+		//hero.setColors(Color.black, Color.black, Color.black, Color.blue);
 
 		return hero;
 	}
@@ -109,10 +111,16 @@ public class Grid : MonoBehaviour {
 	public void onTouchPress (TouchEvent e) {
 		//print ("press " + e.activeTouch.getPos3d(Camera.main));
 		hero.crouch(true);
+		//StartCoroutine(hero.startTargetState());
 	}
 
 	
 	public void onTouchRelease (TouchEvent e) {
+		/*if (hero.targeting) {
+			hero.endTargetState();
+			return;
+		}*/
+
 		//print ("release");
 		hero.moveInSameDirection();
 	}
@@ -124,6 +132,8 @@ public class Grid : MonoBehaviour {
 
 
 	public void onTouchSwipe (TouchEvent e) {
+		//hero.endTargetState();
+
 		//print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
 		hero.moveInDirection(e.activeTouch.deltaPos);
 	}

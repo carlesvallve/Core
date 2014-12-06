@@ -6,21 +6,38 @@ public class Ent : MonoBehaviour {
 
 	protected Grid grid;
 	protected GameObject body;
+	protected GameObject head;
+	protected GameObject hair;
+	protected GameObject torax;
+	protected GameObject armR;
+	protected GameObject armL;
+	protected GameObject subArmR;
+	protected GameObject subArmL;
+	protected GameObject hip;
+	protected GameObject legR;
+	protected GameObject legL;
+	protected GameObject gun;
 
 	protected Vector3 stepPos;
 	protected Vector2 delta = new Vector2(0, 1);
 	protected bool moving = false;
 	protected bool goingToMove = false;
+	public bool targeting = false;
 
 	public float speed = 0.1f; 			// speed of movement
 	public float rotationSpeed = 0.05f;  // speed of rotation
 	public float reaction = 0; //0.1f;  // delay time between moves
 	public float jumpForce = 7f;		// jump impulse force
 
+
+	
+
 	
 	public virtual void init (Grid grid, Transform parent, Vector3 pos) {
 		this.grid = grid;
-		this.body = transform.Find("Body").gameObject;
+		
+		getBodyParts();
+		//setColors();
 
 		name = "Hero";
 		transform.parent = parent;
@@ -30,6 +47,43 @@ public class Ent : MonoBehaviour {
 		stepPos = transform.localPosition;
 
 		grid.cam.target = transform;
+	}
+
+
+	private void getBodyParts () {
+		body = transform.Find("Body").gameObject;
+
+		head = transform.Find("Body/Skin/Head").gameObject;
+		hair = transform.Find("Body/Skin/Head/Hair").gameObject;
+		
+		torax = transform.Find("Body/Skin/Torax").gameObject;
+		armR = transform.Find("Body/Skin/Torax/ArmR").gameObject;
+		armL = transform.Find("Body/Skin/Torax/ArmL").gameObject;
+		subArmR = transform.Find("Body/Skin/Torax/ArmR/SubArmR").gameObject;
+		subArmL = transform.Find("Body/Skin/Torax/ArmL/SubArmL").gameObject;
+
+		hip = transform.Find("Body/Skin/Hip").gameObject;
+		legR = transform.Find("Body/Skin/Hip/LegR").gameObject;
+		legL = transform.Find("Body/Skin/Hip/LegL").gameObject;
+
+		gun = transform.Find("Body/Skin/Torax/ArmR/SubArmR/Gun").gameObject;
+	}
+
+
+	public void setColors (Color haircolor, Color skincolor, Color shirtcolor, Color pantscolor) {
+		hair.renderer.material.color = haircolor;
+		
+		head.renderer.material.color = skincolor;
+		subArmR.renderer.material.color = skincolor;
+		subArmL.renderer.material.color = skincolor;
+
+		torax.renderer.material.color = shirtcolor;
+		armR.renderer.material.color = shirtcolor;
+		armL.renderer.material.color = shirtcolor;
+
+		hip.renderer.material.color = pantscolor;
+		legR.renderer.material.color = pantscolor;
+		legL.renderer.material.color = pantscolor;
 	}
 
 
@@ -116,14 +170,14 @@ public class Ent : MonoBehaviour {
 
 
 	private void moveTo(Vector3 pos, float duration) {
+		// uncrouch
+		uncrouch(duration + 0.1f);
+
 		// move hero
 		transform.DOLocalMove(pos, duration)
 			.SetEase(Ease.Linear)
 			.SetLoops(1)
 			.OnComplete(endMove);
-
-		transform.DOScale(new Vector3(1, 1, 1), duration + 0.1f)
-		.SetEase(Ease.OutQuad);
 
 		// update step position
 		stepPos = pos;
@@ -136,12 +190,13 @@ public class Ent : MonoBehaviour {
 		body.rigidbody.angularVelocity = Vector3.zero;
 
 		// make box jump
-		Audio.play("audio/MarioJump", 0.5f, Random.Range(2.0f, 3.0f));
+		//Audio.play("audio/Squish", 0.5f, Random.Range(1.0f, 2.0f));
 		body.rigidbody.AddForce( new Vector3(0, jumpForce * body.rigidbody.mass, 0), ForceMode.Impulse);
 	}
 
 
 	private void endMove () {
+		Audio.play("audio/Squish", 0.5f, Random.Range(1.0f, 2.0f));
 		StartCoroutine(setNextMove());
 	}
 
@@ -169,4 +224,37 @@ public class Ent : MonoBehaviour {
 		transform.DOScale(new Vector3(1.2f, 0.8f, 1.0f), 0.1f)
 		.SetEase(Ease.OutQuad);
 	}
+
+
+	private void uncrouch (float duration) {
+		transform.DOScale(new Vector3(1, 1, 1), duration)
+		.SetEase(Ease.OutQuad);
+	}
+
+
+	/*public IEnumerator startTargetState () {
+		targeting = true;
+
+		yield return new WaitForSeconds(0.5f);
+
+		if (!targeting) {
+			yield break;
+		}
+
+		//armR.transform.localEulerAngles = new Vector3(90, 0, 0);
+		uncrouch(0.1f);
+
+		armR.transform.DOLocalRotate(new Vector3(90, 0, 0), rotationSpeed)
+			.SetEase(Ease.InOutSine);
+
+		//gun.SetActive(true);
+	}
+
+	public void endTargetState () {
+		//armR.transform.localEulerAngles = Vector3.zero;
+		targeting = false;
+
+		armR.transform.DOLocalRotate(new Vector3(0, 0, 0), rotationSpeed)
+			.SetEase(Ease.InOutSine);
+	}*/
 }
