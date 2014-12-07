@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 
 public class Grid : MonoBehaviour {
 
@@ -8,6 +10,7 @@ public class Grid : MonoBehaviour {
 
 	private Tile[,] tiles;
 
+	private List<Enemy> enemies;
 	private Ent hero;
 
 	public Cam cam;
@@ -43,6 +46,8 @@ public class Grid : MonoBehaviour {
 
 		createTrees(8);
 
+		enemies = createEnemies(4);
+
 		hero = createHero(new Vector3(width / 2, 0, height / 2));
 	}
 
@@ -63,15 +68,44 @@ public class Grid : MonoBehaviour {
 	}
 
 
-	private Ent createHero (Vector3 pos) {
+	private Hero createHero (Vector3 pos) {
 		GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Hero2"));
 		
-		Hero hero = obj.GetComponent<Hero>();
+		Hero hero = obj.AddComponent<Hero>();
 
 		hero.init(this, transform, pos);
 		//hero.setColors(Color.black, Color.black, Color.black, Color.blue);
 
 		return hero;
+	}
+
+
+	private List<Enemy> createEnemies (int max) {
+		Transform container = new GameObject("Enemies").transform;
+		container.parent = transform;
+
+		List<Enemy> enemies = new List<Enemy>();
+
+		for (int i = 0; i < max; i++) {
+			GameObject obj = (GameObject)Instantiate(Resources.Load("game/Prefabs/Hero2"));
+
+			Enemy enemy = obj.AddComponent<Enemy>();
+			Vector3 pos = new Vector3(Random.Range(0, width), 0, Random.Range(0, height));
+			enemy.init(this, container, pos);
+			enemy.setColors(Color.black, Color.black, Color.grey, Color.grey);
+
+			float[] rots = { 0, 90, 180, 270 };
+			float rot = rots[Random.Range(0, rots.Length)];
+			enemy.body.transform.localEulerAngles = new Vector3(0, rot, 0);
+
+			Tile tile = getTileAtPos(enemy.transform.localPosition);
+			tile.setWalkable(false);
+
+			enemies.Add(enemy);
+		}
+		
+
+		return enemies;
 	}
 
 
@@ -136,5 +170,7 @@ public class Grid : MonoBehaviour {
 
 		//print ("swipe " + e.activeTouch.relativeDeltaPos + " " + e.activeTouch.getVelocity3d(Camera.main) * 0.1f);
 		hero.moveInDirection(e.activeTouch.deltaPos);
+		//hero.rotateTo(e.activeTouch.deltaPos, 0.2f);
+		//hero.uncrouch(0.2f);
 	}
 }

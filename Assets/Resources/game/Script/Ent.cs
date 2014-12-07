@@ -5,7 +5,7 @@ using DG.Tweening;
 public class Ent : MonoBehaviour {
 
 	protected Grid grid;
-	protected GameObject body;
+	public GameObject body;
 	protected GameObject head;
 	protected GameObject hair;
 	protected GameObject torax;
@@ -24,13 +24,10 @@ public class Ent : MonoBehaviour {
 	protected bool goingToMove = false;
 	public bool targeting = false;
 
-	public float speed = 0.1f; 			// speed of movement
-	public float rotationSpeed = 0.05f;  // speed of rotation
-	public float reaction = 0; //0.1f;  // delay time between moves
-	public float jumpForce = 7f;		// jump impulse force
-
-
-	
+	public float speed = 0.2f; 			// speed of movement
+	public float rotationSpeed = 0.1f;  // speed of rotation
+	public float reaction = 0f; //0.1f;  // delay time between moves
+	public float jumpForce = 6f;		// jump impulse force
 
 	
 	public virtual void init (Grid grid, Transform parent, Vector3 pos) {
@@ -47,6 +44,8 @@ public class Ent : MonoBehaviour {
 		stepPos = transform.localPosition;
 
 		grid.cam.target = transform;
+
+		armR.transform.localEulerAngles = new Vector3(90, 0, 0);
 	}
 
 
@@ -114,11 +113,14 @@ public class Ent : MonoBehaviour {
 
 		moving = true;
 
+		
+
+
 		// set final delta
-		setDelta(_delta);
+		getDelta(_delta);
 
 		// make body rotate
-		rotateTo(delta);
+		rotateTo(delta, rotationSpeed);
 
 		// make body jump
 		jump();
@@ -139,7 +141,7 @@ public class Ent : MonoBehaviour {
 	}
 
 
-	private void setDelta(Vector2 delta) {
+	private Vector2 getDelta(Vector2 delta) {
 		if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y)) {
 			delta.x = delta.x > 0 ? 1 : -1;
 			delta.y = 0;
@@ -149,10 +151,14 @@ public class Ent : MonoBehaviour {
 		}
 
 		this.delta = delta;
+
+		return delta;
 	}
 
 
-	private void rotateTo (Vector2 delta) {
+	public void rotateTo (Vector2 delta, float duration) {
+		delta = getDelta(delta);
+
 		float rot = 0;
 		if (delta.y == 1) {
 			rot = 180;
@@ -164,19 +170,18 @@ public class Ent : MonoBehaviour {
 			rot = 90;
 		}
 
-		body.transform.DOLocalRotate(new Vector3(0, rot, 0), rotationSpeed)
+		body.transform.DOLocalRotate(new Vector3(0, rot, 0), duration)
 			.SetEase(Ease.InOutSine);
 	}
 
 
 	private void moveTo(Vector3 pos, float duration) {
 		// uncrouch
-		uncrouch(duration + 0.1f);
+		uncrouch(duration);
 
 		// move hero
 		transform.DOLocalMove(pos, duration)
-			.SetEase(Ease.Linear)
-			.SetLoops(1)
+			.SetEase(Ease.InOutQuad)
 			.OnComplete(endMove);
 
 		// update step position
@@ -185,9 +190,14 @@ public class Ent : MonoBehaviour {
 
 
 	private void jump () {
+		
 		// reset box physics
 		body.rigidbody.velocity = Vector3.zero;
 		body.rigidbody.angularVelocity = Vector3.zero;
+
+		//body.rigidbody.isKinematic = true; // stop!
+		//body.transform.localPosition = Vector3.zero;
+		//body.rigidbody.isKinematic = false; // stop!
 
 		// make box jump
 		//Audio.play("audio/Squish", 0.5f, Random.Range(1.0f, 2.0f));
@@ -226,9 +236,9 @@ public class Ent : MonoBehaviour {
 	}
 
 
-	private void uncrouch (float duration) {
+	public void uncrouch (float duration) {
 		transform.DOScale(new Vector3(1, 1, 1), duration)
-		.SetEase(Ease.OutQuad);
+		.SetEase(Ease.InOutQuad);
 	}
 
 
